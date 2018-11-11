@@ -135,30 +135,58 @@ bool squares_share_diagonal(File s1_f, Rank s1_r, File s2_f, Rank s2_r)
     return false;
 }
 
+bool squares_share_pawns_move(enum PieceColor color, enum MoveType move, File s1_f, Rank s1_r, File s2_f, Rank s2_r)
+{
+    if (color == White && s1_r > 1)
+    {
+        if (move == NormalMove)
+        {
+            if (s1_r == 2)
+            {
+                return (s1_r + 1 == s2_r || s1_r + 2 == s2_r) && s1_f == s2_f;
+            }
+            else
+            {
+                return (s1_r + 1 == s2_r && s1_f == s2_f);
+            }
+        }
+        else
+        {
+            return (s1_r + 1 == s2_r) && (s1_f + 1 == s2_f || s1_f - 1 == s2_f);
+        }
+    }
+    else if (color == Black && s1_r <= 7)
+    {
+        if (move == NormalMove)
+        {
+            if (s1_r == 7)
+            {
+                return (s1_r - 1 == s2_r || s1_r - 2 == s2_r) && (s1_f == s2_f);
+            }
+            else
+            {
+                return (s1_r - 1 == s2_r) && (s1_f == s2_f);
+            }
+        }
+        else
+        {
+            return (s1_r - 1 == s2_r) && (s1_f - 1 == s2_f || s1_f + 1 == s2_f);
+        }
+    }
+    return false;
+}
+
 bool squares_share_knights_move(File s1_f, Rank s1_r, File s2_f, Rank s2_r)
 {
   return    ((s1_r - 2 == s2_r || s1_r + 2 == s2_r) && (s1_f - 1 - 'a' == s2_f - 'a' || s1_f + 1 - 'a' == s2_f - 'a'))
          || ((s1_r - 1 == s2_r || s1_r + 1 == s2_r) && (s1_f - 2 - 'a' == s2_f - 'a' || s1_f + 2 - 'a' == s2_f - 'a'));
 }
 
-bool squares_share_pawns_move(enum PieceColor color, enum MoveType move, File s1_f, Rank s1_r, File s2_f, Rank s2_r)
-{
-    if (move == NormalMove)
-    {
-        return s1_r + 1 == s2_r || s1_r - 1 == s2_r;
-    }
-    else  if (move == CaptureMove)
-    {
-        return (s1_r + 1 == s2_r && s1_f + 1 == s2_f) || (s1_r - 1 == s2_r && s1_f - 1 == s2_f);
-    }
-
-    return false;
-}
-
 bool squares_share_kings_move(File s1_f, Rank s1_r, File s2_f, Rank s2_r)
 {
-  return (s1_f + 1 == s2_f && s1_r == s2_r) || (s1_f - 1 == s2_f && s1_r == s2_r) ||
-         (s1_f == s2_f + 1 && s1_r == s2_r) || (s1_f == s2_f && s1_r == s2_r - 1);
+    return  s1_f + 1 == s2_f || s1_f - 1 == s2_f ||
+            s1_r - 1 == s2_r || s1_r + 1 == s2_r ||
+            s1_f - 'a' - 1 == s2_r || s1_f - 'a' + 1 == s2_r;
 }
 
 bool squares_share_queens_move(File s1_f, Rank s1_r, File s2_f, Rank s2_r)
@@ -166,9 +194,7 @@ bool squares_share_queens_move(File s1_f, Rank s1_r, File s2_f, Rank s2_r)
     return squares_share_diagonal(s1_f, s1_r, s2_f, s2_r) || s1_f == s2_f || s1_r == s2_r;
 }
 
-
-
 bool isSquareInBounds(File file, Rank rank)
 {
-    return file - 'a' < 8 && file - 'a' >= 0 && rank < 8 && rank >= 0;
+    return (file - 'a' < 8) && (file - 'a' >= 0) && (rank < 8 && rank >= 0);
 }
